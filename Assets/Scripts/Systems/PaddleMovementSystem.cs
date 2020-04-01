@@ -11,9 +11,9 @@ public class PaddleMovementSystem : JobComponentSystem
         float deltaTime = Time.DeltaTime;
         float yBound = GameManager.main.yBound;
 
-        Entities.ForEach((ref Translation trans, in PaddleMovementData data) =>
+        Entities.ForEach((ref Translation translation, in PaddleMovementData data) =>
         {
-            trans.Value.y = math.clamp(trans.Value.y + (data.speed * data.direction * deltaTime), -yBound, yBound);
+            translation.Value.y = math.clamp(translation.Value.y + (data.speed * data.direction * deltaTime), -yBound, yBound);
         }).Run();
 
         return default;

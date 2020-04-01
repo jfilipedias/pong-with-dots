@@ -1,12 +1,12 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Physics;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    // Singleton design
     public static GameManager main;
 
     public GameObject ballPrefab;
@@ -15,13 +15,13 @@ public class GameManager : MonoBehaviour
     public float yBound = 3f;
     public float ballSpeed = 3f;
     public float respawnDelay = 2f;
-    public int[] playerScores;
+    private int[] playerScores;
 
     public Text mainText;
     public Text[] playerTexts;
 
     private Entity ballEntityPrefab;
-    private EntityManager manager;
+    private EntityManager entityManager;
 
     private WaitForSeconds oneSecond;
     private WaitForSeconds delay;
@@ -37,6 +37,12 @@ public class GameManager : MonoBehaviour
         main = this;
         playerScores = new int[2];
 
+
+        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
+        GameObjectConversionSettings conversionSettings =  GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, new BlobAssetStore());
+        ballEntityPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(ballPrefab, conversionSettings);
+
         oneSecond = new WaitForSeconds(1f);
         delay = new WaitForSeconds(respawnDelay);
 
@@ -50,6 +56,8 @@ public class GameManager : MonoBehaviour
 
         for (int count = 0; count < playerScores.Length; count++)
             playerTexts[count].text = playerScores[count].ToString();
+
+        StartCoroutine(CountdownAndSpawnBall());
     }
 
 
@@ -61,11 +69,13 @@ public class GameManager : MonoBehaviour
         mainText.text = "3";
         yield return oneSecond;
 
-        mainText.text = "3";
+        mainText.text = "2";
         yield return oneSecond;
 
-        mainText.text = "3";
+        mainText.text = "1";
         yield return oneSecond;
+
+        mainText.text = "";
 
         SpawnBall();
     }
@@ -73,6 +83,17 @@ public class GameManager : MonoBehaviour
 
     private void SpawnBall()
     {
+        Entity ball = entityManager.Instantiate(ballEntityPrefab);
 
+        Vector3 direction = new Vector3(UnityEngine.Random.Range(0, 2) == 0 ? -1 : 1, UnityEngine.Random.Range(-.5f, .5f), 0f).normalized;
+        Vector3 speed = direction * ballSpeed;
+
+        PhysicsVelocity velocity = new PhysicsVelocity()
+        {
+            Linear = speed,
+            Angular = float3.zero
+        };
+
+        entityManager.AddComponentData(ball, velocity);
     }
 }
