@@ -1,2 +1,7 @@
 # pong-with-dots
-This is a pong game made with Unity. It was made to study Data-Oriented Design. This game use Unity Data-Oriented Technology Stack.
+This is a pong game made with Unity with editor version 2019.3.0f6. It was made to study Data-Oriented Design. This game use Unity Data-Oriented Technology Stack (DOTS) so some packages in preview version was installed.
+
+## Installed Packages
+[Entities preview 4 - 0.3.0] (https://docs.unity3d.com/Packages/com.unity.entities@0.3/manual/index.html)
+[Hypbrid Renderer preview 4 - 0.3.0] (https://docs.unity3d.com/Packages/com.unity.rendering.hybrid@0.3/manual/index.html)
+Unity Physics preview 1 - 0.2.5
